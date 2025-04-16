@@ -1,22 +1,14 @@
 from selenium import webdriver
-from utilities import config
+from selenium.webdriver.chrome.options import Options
 
-def before_scenario(context,driver):
-    browser_name = config.read_configuration("basic info", "browser")
+def before_scenario(context, scenario):
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
-    if browser_name.__eq__("chrome"):
-        context.driver = webdriver.Chrome()
-    elif browser_name.__eq__("firefox"):
-        context.driver = webdriver.Firefox()
-    elif browser_name.__eq__("edge"):
-        context.driver = webdriver.Edge()
+    context.driver = webdriver.Chrome(options=chrome_options)
 
-    context.driver.maximize_window()
-    context.driver.get(config.read_configuration("basic info","url"))
-
-
-
-
-def after_scenario(context,driver):
-    context.driver.quit()
-
+def after_scenario(context, scenario):
+    if hasattr(context, 'driver'):
+        context.driver.quit()
